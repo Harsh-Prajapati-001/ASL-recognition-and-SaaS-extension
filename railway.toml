@@ -1,8 +1,6 @@
 [build]
-builder = "dockerfile"
+builder = "DOCKER"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --worker-class sync src.app:app"
-healthcheckPath = "/"
-healthcheckTimeout = 100
-restartPolicyMaxRetries = 5
+startCommand = "gunicorn --bind 0.0.0.0:5000 --timeout 120 --workers 2 src.app:app"
