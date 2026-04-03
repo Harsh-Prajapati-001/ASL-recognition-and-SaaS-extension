@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  asl-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: asl-detector
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - USE_GPU=False
+      - FRAME_SKIP=2
+      - CONFIDENCE_THRESHOLD=0.6
+      - USE_HAND_TRACKING=True
+      - MODEL_PATH=asl_model_improved.h5
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./uploads:/app/uploads
+      - ./results:/app/results
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - asl-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: asl-detector-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot:/etc/letsencrypt:ro
+    depends_on:
+      - asl-detector
+    networks:
+      - asl-network
+    restart: unless-stopped
+
+networks:
+  asl-network:
+    driver: bridge
