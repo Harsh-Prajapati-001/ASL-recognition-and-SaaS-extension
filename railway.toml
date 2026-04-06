@@ -3,4 +3,4 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "gunicorn --bind 0.0.0.0:5000 --timeout 120 --workers 2 src.app:app"
+startCommand = "gunicorn --bind 0.0.0.0:5000 --timeout 120 --workers 1 --preload app:app"
