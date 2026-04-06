@@ -53,7 +53,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Run with gunicorn
 CMD ["gunicorn", \
      "--bind", "0.0.0.0:5000", \
-     "--workers", "2", \
+     "--workers", "1", \
      "--worker-class", "sync", \
      "--worker-connections", "1000", \
      "--timeout", "120", \
